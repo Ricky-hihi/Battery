@@ -1,44 +1,56 @@
-const int T = 10 ;
-
-int val[T] ;
-int readIndex = 0 ;
-int total = 0 ;
-int average = 0 ;
 int analogPin = A3 ;
+int MyArray[11] = {0} ;
+int val ;
+byte blank ;
 
 void setup() {
   
   Serial.begin(9600) ;
-  for (int i = 0; i < T ; i++) {
-    val[i] = 0;
-  }
-  //將所有讀數初始化為0
 }
 
 void loop() {
-
-  total = total - val[readIndex];                                    //減去最後一次讀數
-  val[readIndex] =map(analogRead(analogPin),720,845,0,100) ;         //從感應器讀值並把範圍設定成0~100
-  total = total + val[readIndex];                                    //將讀值加到總數中
-  readIndex = readIndex + 1;                                         //下一次
-
-  if (readIndex >= T) {
-    readIndex = 0 ;
+  val = map(analogRead(analogPin),720,850,0,100) ;
+//
+  Serial.println("排序前 : ") ;
+//  
+  // 把感測器值填入陣列中
+  for (byte i = 0 ; i<11 ; i++){
+    MyArray[i] = {val} ;
+    delay(100) ;
     }
-  //加完10次後就進到下一個10次
-  average = total / T ;                           //計算平均 
+//
+  // 印出目前未排序的陣列
+  for (byte j = 0 ; j<11 ; j++){
+    Serial.println(MyArray[j]) ;
+    }
+  Serial.println("排序後 : ") ;
+//
+  // 把陣列中的值由大排到小
+    for (byte m = 0 ; m<11 ; m++ ){
+      for (byte n = m+1 ; n<11 ; n++){
+        if (MyArray[m] < MyArray[n]){
+          blank = MyArray[m] ;
+          MyArray[m] = MyArray[n] ;
+          MyArray[n] = blank ;
+          }
+        } 
+      }
  
-  if (average<0 or average>100) {
-    if (average<0) {
-      Serial.print("battery capacity: ") ;Serial.println(0) ;
+    // 印出排序後的陣列
+//
+    for (byte p = 0 ; p<11 ; p++){
+      Serial.println(MyArray[p]) ;
       }
-    if (average>100) {
-      Serial.print("battery capacity: ") ;Serial.println(100) ;
-      } 
-    }else{
-      Serial.print("battery capacity: ") ;Serial.println(average) ;
-      }
-  Serial.println(average) ;
-  delay(100) ;
+//
+    if (MyArray[5]<0 or MyArray[5]>100){
+      if (MyArray[5]<0){
+        Serial.print("battery capacity : ") ;Serial.print(0) ;Serial.println("%") ;
+        }
+      if (MyArray[5]>100){
+        Serial.print("battery capacity : ") ;Serial.print(100) ;Serial.println("%") ;
+        }
+      }else{
+        Serial.print("battery capacity : ") ;Serial.print(MyArray[5]) ;Serial.println("%") ;
+        }
 
 }
